@@ -24,8 +24,8 @@ app.use(express.json());
 // for hosting the front-end with the backend server
 app.use(express.static(path.join(__dirname, "../public")));
 // mounting the planets router to express
-app.use(planetsRouter);
-app.use(launchesRouter);
+app.use('/planets', planetsRouter);
+app.use('/launches',launchesRouter);
 // redirecting '/' to the index.html
 app.get("/*", (req, res) => {
   res.sendFile(path.join(__dirname, "../public/index.html"));

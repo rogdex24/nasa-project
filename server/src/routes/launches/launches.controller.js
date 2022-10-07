@@ -34,9 +34,7 @@ function httpAddNewLaunch(req, res) {
 
   addNewLaunch(launch);
 
-  return res.status(200).json({
-    status: "done",
-  });
+  return res.status(201).json(launch);
 }
 
 function httpAbortLaunch(req, res) {

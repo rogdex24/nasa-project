@@ -3,6 +3,8 @@ const http = require("http");
 
 const app = require("./app");
 
+const { mongoConnect } = require('./services/mongo');
+
 const { loadPlanetsData } = require("./models/planets.model");
 
 const PORT = process.env.PORT || 8000;
@@ -12,6 +14,7 @@ const server = http.createServer(app);
 // 'async'hronous fxn to a'wait' for loading planets data AND ONLY THEN -> start the server
 // await is written only with asynchronous functions.
 async function startServer() {
+  await mongoConnect();
   await loadPlanetsData();
 
   server.listen(PORT, () => {

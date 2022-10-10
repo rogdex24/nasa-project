@@ -2,7 +2,7 @@ const fs = require("fs");
 const path = require("path");
 const { parse } = require("csv-parse");
 
-const habitablePlanets = [];
+const planets = require("./planets.mongo");
 
 function isHabitablePlanet(planet) {
   return (
@@ -34,26 +34,49 @@ function loadPlanetsData() {
           columns: true,
         })
       ) // commands are chained and data is passed.
-      .on("data", (data) => {
+      .on("data", async (data) => {
         // 'on' is a event emitter.
-        if (isHabitablePlanet(data)) habitablePlanets.push(data);
+        if (isHabitablePlanet(data)) {
+          savePlanet(data);
+        }
       })
       .on("error", (err) => {
         console.log(err);
         reject(err); // Promise set to 'rejected'
       })
-      .on("end", () => {
-        /* console.log(habitablePlanets.map((planet) => {
-        return planet["kepler_name"];
-        }));                                           */
-        console.log(`${habitablePlanets.length} habitable planets found!`);
+      .on("end", async() => {
+        const countPlanetsFound = (await getAllPlanets());
+        console.log(`${countPlanetsFound.length} habitable planets found!`);
         resolve(); // Promise set to 'fulfilled'
       });
   });
 }
 
-function getAllPlanets() {
-  return habitablePlanets;
+async function getAllPlanets() {
+  // returns all planets - 'Empty Object'
+  return await planets.find( {}, {
+    '_id': 0,  // ignore id and v and send rest of the fields 
+    '__v': 0,  
+  });
+}
+
+async function savePlanet(planet) {
+  try {
+    // ONLY add the planet if it doesn't already exist  - To avaoid duplicates
+    await planets.updateOne(
+      {
+        keplerName: planet.kepler_name,  // check if obj with this param already exists
+      },
+      {
+        keplerName: planet.kepler_name,  // if exists update , else create new
+      },
+      {
+        upsert: true, // update + insert
+      }
+    );
+  } catch (err) {
+    console.error(`Could not save planet ${err}`);
+  }
 }
 
 module.exports = {

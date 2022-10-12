@@ -4,10 +4,12 @@ const mongoose = require("mongoose");
 require("dotenv").config();
 const MONGO_URL = process.env.MONGO_URL;
 const { mongoConnect, mongoDisconnect } = require("../../services/mongo");
+const { loadPlanetsData } = require("../../models/planets.model");
 
 describe("Lauches API", () => {
   beforeAll(async () => {
     await mongoConnect();
+    await loadPlanetsData();
   });
 
   afterAll(async () => {

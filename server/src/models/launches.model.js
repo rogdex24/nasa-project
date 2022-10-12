@@ -4,20 +4,6 @@ const planets = require("./planets.mongo");
 
 const DEFAULT_FLIGHT_NUMBER = 100;
 
-// const launch = {
-//   // corresponding spaceX API prop
-//   flightNumber: 100, // flight_number
-//   mission: "Kepler Exploration X", // name
-//   rocket: "Explorer IS1", // rocket.name
-//   launchDate: new Date("December 27, 2030"), // date_local
-//   target: "Kepler-442 b", // not applicable
-//   customers: ["ZTM", "NASA"], // payload.customers
-//   upcoming: true, // upcoming
-//   success: true, // success
-// };
-// // adding the first default value
-// saveLaunch(launch);
-
 const SPACEX_API_URL = "https://api.spacexdata.com/v4/launches/query";
 
 async function populateLaunches() {
@@ -96,9 +82,7 @@ async function existsLaunchesWithId(launchId) {
 }
 
 async function getLatestFlightNumber() {
-  const latestLaunch = await launchesDatabase
-    .findOne() // return first occuring obj
-    .sort("-flightNumber"); // sort in descending order of flightnumber
+  const latestLaunch = await launchesDatabase.findOne().sort("-flightNumber");
 
   if (!latestLaunch) {
     return DEFAULT_FLIGHT_NUMBER;
@@ -109,31 +93,28 @@ async function getLatestFlightNumber() {
 async function getAllLaunches(skip, limit) {
   return await launchesDatabase
     .find({}, { _id: 0, __V: 0 })
-    .sort({ flightNumber: 1 }) // sort according to flightnumber
-    .skip(skip) // skips first n elements - to set pages
-    .limit(limit); // limits output to first n elements
+    .sort({ flightNumber: 1 })
+    .skip(skip)
+    .limit(limit);
 }
 
 async function saveLaunch(launch) {
-  // will only return prop. we set in update=>'launch' rather than "updateOne()" which adds and returns some extra prop.
   await launchesDatabase.findOneAndUpdate(
-    // findOne + Update
     {
-      flightNumber: launch.flightNumber, // check if this obj already exists
+      flightNumber: launch.flightNumber,
     },
-    launch, // update with this obj if exists , else create new
+    launch,
     {
-      upsert: true, // this enables it
+      upsert: true,
     }
   );
 }
 
 async function scheduleNewLaunch(launch) {
-  // return one object matching the field
   const planet = await planets.findOne({
     keplerName: launch.target,
   });
-  // check if the launching planet exists in planetsDatabse
+
   if (!planet) {
     throw new Error("No matching planet found");
   }
@@ -151,13 +132,12 @@ async function scheduleNewLaunch(launch) {
 }
 
 async function abortLaunchById(launchId) {
-  // update if exists !NO CREATING NEW OBJ!
   const aborted = await launchesDatabase.updateOne(
     {
-      flightNumber: launchId, // if obj with this prop. found
+      flightNumber: launchId,
     },
     {
-      upcoming: false, // update these prop. of it obj
+      upcoming: false,
       success: false,
     }
   );

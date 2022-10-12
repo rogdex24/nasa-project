@@ -14,7 +14,6 @@ async function httpGetAllLaunches(req, res) {
 }
 
 async function httpAddNewLaunch(req, res) {
-  // input data from POST req
   const launch = req.body;
   if (
     !launch.mission ||
@@ -27,9 +26,7 @@ async function httpAddNewLaunch(req, res) {
     });
   }
 
-  // convert launchdate from string to Date object
   launch.launchDate = new Date(launch.launchDate);
-  // NaN - Not A Number
   if (isNaN(launch.launchDate)) {
     return res.status(400).json({
       error: "Invalid launch date",

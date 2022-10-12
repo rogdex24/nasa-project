@@ -1,5 +1,3 @@
-// express is used a middleware to the http module to create a server
-// the 'express app' can be written separately here.
 const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan");
@@ -12,26 +10,20 @@ const launchesRouter = require("./routes/launches/launches.router");
 
 const app = express();
 
-// 'app.use' -> middleware | chaining of all fxns
-// enable CORS for the particular links
 app.use(
   cors({
     origin: "http://localhost:3000",
   })
 );
-// logging the HTTP requests
+
 app.use(morgan("combined"));
 
-// processing the incoming data
 app.use(express.json());
 
-// for hosting the front-end with the backend server
 app.use(express.static(path.join(__dirname, "../public")));
 
-// Versioning the api
 app.use("/v1", api);
 
-// redirecting '/' to the index.html
 app.get("/*", (req, res) => {
   res.sendFile(path.join(__dirname, "../public/index.html"));
 });

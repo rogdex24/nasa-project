@@ -1,5 +1,15 @@
 # NASA Mission Control Project
 
+**Tech Stack**: *Node.js, Expressjs, MongoDB, Docker, AWS*  
+[Live Demo of the website](http://nasa.rogdex24.me/) 
+
+- Developed a **REST API** using NodeJS and **express.js** that performs **CRUD** operations like sending requested mission data and writing the data to **MongoDB**, retrieve and delete selected entries form the database.
+- Finds out Kepler planets which are habitable from the data provided from Kepler Satelites.
+- Communicates w/ the SpaceX REST API to populate the historical data of missions to the MongoDB database.
+- Used **GitHub Actions** to make a continuous integration workflow that builds and tests the code for production.
+- Containerized the website using **Docker**, published it to dockerhub and hosted the container on **AWS EC2**.
+
+
 ## Getting Started
 
 1. Ensure you have Node.js installed.
